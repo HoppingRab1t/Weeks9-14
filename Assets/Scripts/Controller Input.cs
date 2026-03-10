@@ -15,12 +15,12 @@ public class ControllerInput : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //transform.position += (Vector3) movement * speed * Time.deltaTime;
-        transform.position = movement;
+        transform.position += (Vector3)  movement * speed * Time.deltaTime;
+        //transform.position = movement;
     }
     public void OnMove(InputAction.CallbackContext context)
     {
-        movement = context.ReadValue<Vector2>();
+         movement = transform.right * context.ReadValue<Vector2>();
     }
 
     public void OnAttack(InputAction.CallbackContext context)
@@ -35,5 +35,10 @@ public class ControllerInput : MonoBehaviour
     {
         movement = Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>());
 
+    }
+    public void OnLook(InputAction.CallbackContext context)
+    {
+        
+        transform.eulerAngles = (Vector3)context.ReadValue<Vector2>();
     }
 }
