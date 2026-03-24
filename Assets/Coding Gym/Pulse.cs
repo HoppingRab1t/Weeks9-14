@@ -7,6 +7,7 @@ public class Pulse : MonoBehaviour
     public AnimationCurve curve;
     float time = 0f;
     public int speed = 10;
+    public TrailRenderer trailRenderer;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -24,9 +25,16 @@ public class Pulse : MonoBehaviour
 
         pos = transform.position;
         pos.x += speed * Time.deltaTime;
+
         if (pos.x >= 10)
         {
-            pos.x = -10;
+            trailRenderer.Clear();
+            pos.x = -10; 
+            transform.position = pos;
+
+            trailRenderer.Clear();
+
+
         }
         pos.y = curve.Evaluate(time)*5;
 
