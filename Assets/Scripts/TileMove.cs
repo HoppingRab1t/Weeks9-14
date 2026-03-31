@@ -6,7 +6,7 @@ public class TileMove : MonoBehaviour
 {
     public Transform duck;
     public Tilemap tilemap;
-
+    public Tile flower;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -21,5 +21,11 @@ public class TileMove : MonoBehaviour
         Vector2 pos = tilemap.GetCellCenterLocal(cellPos);
 
         duck.position = pos;
+
+        if (Mouse.current.leftButton.wasPressedThisFrame)
+        {
+            tilemap.SetTile(cellPos, flower);
+            Debug.Log(tilemap.GetTile(cellPos));
+        }
     }
 }
