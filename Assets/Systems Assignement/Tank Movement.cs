@@ -3,7 +3,6 @@ using UnityEngine.InputSystem;
 
 public class TankMovement : MonoBehaviour
 {
-    Vector2 xPos;
     float rotation; 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()

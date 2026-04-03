@@ -20,6 +20,8 @@ public class ControllerInput : MonoBehaviour
     }
     public void OnMove(InputAction.CallbackContext context)
     {
+        Debug.Log("poop");
+
         movement = context.ReadValue<Vector2>();
     }
 
@@ -34,6 +36,6 @@ public class ControllerInput : MonoBehaviour
     public void OnPoint(InputAction.CallbackContext context)
     {
         movement = Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>());
-
+        Debug.Log("poop");
     }
 }
