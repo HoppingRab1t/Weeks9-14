@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using UnityEngine;
 public class SpriteAttack : MonoBehaviour
@@ -10,6 +9,16 @@ public class SpriteAttack : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        type_object = (int)Random.Range(1, 3);
+        if (type_object == 3)
+        {
+            type_object = (int)Random.Range(1, 3); //further lowers the chance of becoming a crate
+            if (type_object == 3)
+            {
+                type_object = (int)Random.Range(3, 6); //chooses crate type if it stills rolls as a crate
+
+            }
+        }
         
     }
 

@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UIElements;
 
 public class TankMovement : MonoBehaviour
 {
-    float rotation; 
+    float rotation;
+    Vector2 dir;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -13,16 +15,18 @@ public class TankMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //converts the x and y into a direction
+        Vector3 angles = dir - (Vector2)transform.position;
+        transform.up = angles;
     }
     void change_direciton()
     {
         //Vector2
         
     }
-    public void OnMove(InputAction.CallbackContext context)
+    public void OnLook(InputAction.CallbackContext context)
     {
-         //= context.ReadValue<Vector2>();
+          dir = context.ReadValue<Vector2>();
     }
 
     public void OnAttack(InputAction.CallbackContext context)

@@ -40,15 +40,17 @@ public class Spawner : MonoBehaviour
     void Update()
     {
         //position of the thing
-        pos.y += -1 * Time.deltaTime;
-        pos.x = dir.x;
+        pos.y += -1.4f * Time.deltaTime;
+        
+        dir.x += newRot.x;
+        pos.x -= newRot.x;
 
 
         timer += 1 * Time.deltaTime;
 
-        if (timer > 2)
+        if (timer > 1)
         {
-            prefab = Instantiate(target, new Vector2(Random.Range(-10, 10), 4), transform.rotation, parent);
+            prefab = Instantiate(target, new Vector2(Random.Range(-10 - (15*newRot.x), 10 + (15*newRot.x)), 7), transform.rotation, parent);
             object_list.Add(prefab);
 
             for (int i = 0; i < object_list.Count; i += 1)
@@ -89,7 +91,7 @@ public class Spawner : MonoBehaviour
 
             timer = 0;
         }
-        transform.eulerAngles = dir;
+        transform.eulerAngles = newRot;
         transform.position = pos;
         //transform.up = dir;
         //control k and then d
@@ -98,24 +100,8 @@ public class Spawner : MonoBehaviour
     //note only put one unity input system in the game else it ignores the others
     public void Move(InputAction.CallbackContext context)
     {
-        dir += context.ReadValue<Vector2>() * Time.deltaTime;
-        Debug.Log(dir);
-
-        if (dir.x >= 45)
-        {
-            dir.x = 45;
-            Debug.Log("789");
-
-        }
-        else if (dir.x <= -45)
-        {
-            dir.x = -45;
-            Debug.Log("132");
-
-        }
-
-        newRot = dir;
-        newRot.y = 0;
+        newRot = context.ReadValue<Vector2>() * Time.deltaTime;
+        
 
     }
     public void OnAttack(InputAction.CallbackContext context)
