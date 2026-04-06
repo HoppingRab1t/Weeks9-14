@@ -35,6 +35,5 @@ public class GroundMovement : MonoBehaviour
 
         transform.position = pos;
 
-        
     }
 }

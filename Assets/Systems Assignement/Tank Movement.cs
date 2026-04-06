@@ -1,10 +1,17 @@
+using JetBrains.Annotations;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UIElements;
 
 public class TankMovement : MonoBehaviour
 {
-    float rotation;
+    public List<GameObject> bullet_list;
+
+    public Vector2 pos;
+   
+
+    public Vector3 angles;
     public Vector2 dir;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
@@ -16,9 +23,14 @@ public class TankMovement : MonoBehaviour
     void Update()
     {
         //converts the x and y into a direction
-        Vector3 angles = dir - (Vector2)transform.position;
+        //Debug.Log(dir);
+        //Debug.Log(transform.position);
+
+        angles = dir - new Vector2(0,0);
         transform.up = angles;
-    }
+        pos = transform.position;
+        
+        }
     void change_direciton()
     {
         //Vector2
@@ -29,14 +41,7 @@ public class TankMovement : MonoBehaviour
           dir = context.ReadValue<Vector2>();
     }
 
-    public void OnAttack(InputAction.CallbackContext context)
-    {
-        Debug.Log("attack" + context.phase);
-        if (context.performed == true)
-        {
-            //SFX.Play();
-        }
-    }
+    
     public void OnPoint(InputAction.CallbackContext context)
     {
         //movement = Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>());

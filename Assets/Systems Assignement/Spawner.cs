@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,13 +7,23 @@ using UnityEngine.InputSystem;
 
 public class Spawner : MonoBehaviour
 {
+    //for the scene objects
     public GameObject prefab;
     public GameObject target;
+    public Transform parent;
 
+    //for the bullet objects
+    public GameObject prefab1;
+    public GameObject target1;
+    public Transform parent1;
+
+
+    //tank hitbox
     public SpriteRenderer tank;
 
-    public Transform parent;
-    public SpriteAttack Scene_Object;
+
+
+    public TankMovement tankmovement;
 
     public float timer;
     public float Tank_Health;
@@ -21,6 +32,12 @@ public class Spawner : MonoBehaviour
     public Vector3 newRot;
 
     public List<GameObject> object_list;
+    public SpriteAttack Scene_Object;
+
+    public List<GameObject> bullet_list;
+    public Bullet bullets;
+
+
 
 
     float points = 0;
@@ -55,6 +72,8 @@ public class Spawner : MonoBehaviour
             for (int i = 0; i < object_list.Count; i += 1)
             {
                 Scene_Object = object_list[i].GetComponent<SpriteAttack>();
+
+
                 if (tank.bounds.Contains(Scene_Object.transform.position))
                 {
                     StartCoroutine(hit());
@@ -103,10 +122,50 @@ public class Spawner : MonoBehaviour
         
 
     }
-    public void OnAttack(InputAction.CallbackContext context)
+    public void OnShoot(InputAction.CallbackContext context)
     {
-        Debug.Log("attack" + context.phase);
+        int delays= 0;
         
+
+        if (context.performed == true)
+        {
+            tankmovement = tankmovement.GetComponent<TankMovement>();
+
+
+            prefab1 = Instantiate(target1, tankmovement.pos,transform.rotation, parent1);
+            bullet_list.Add(prefab1);
+
+            for (int i = 0; i < bullet_list.Count; i += 1)
+            {
+                if (i == bullet_list.Count)
+                {
+                    bullets = bullet_list[i].GetComponent<Bullet>();
+
+                    bullets.dir = tankmovement.angles;
+                    bullets.type = Weapontype;
+                }
+            }
+
+
+        }
+    }
+
+    int Weapontype = 1;
+    public void OnNext(InputAction.CallbackContext context)
+    {
+        if (context.performed == true)
+        {
+            Weapontype = 1;
+        }
+        
+    }
+    public void OnPrevious(InputAction.CallbackContext context)
+    {
+        if (context.performed == true)
+        {
+            Weapontype = 2;
+        }
+
     }
     IEnumerator hit()
     {
