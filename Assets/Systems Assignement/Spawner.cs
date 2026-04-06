@@ -57,120 +57,165 @@ public class Spawner : MonoBehaviour
     {
         //position of the thing
         pos.y += -1.4f * Time.deltaTime;
-        
+
         //dir.x += newRot.x * Time.deltaTime;
-        pos.x -= newRot.x ;
+        pos.x -= newRot.x;
 
 
         timer += 1 * Time.deltaTime;
 
+        if (ButtonPressedDown)
+        {
+            if (Weapontype == 1)
+            {
+                delays = 0.1f;
+            }
+            else if (Weapontype == 2)
+            {
+                delays = 1;
+
+            }
+
+            if (timedelay > delays)
+            {
+                tankmovement = tankmovement.GetComponent<TankMovement>();
+
+
+                prefab1 = Instantiate(target1, tankmovement.pos, transform.rotation, parent1);
+                bullet_list.Add(prefab1);
+
+                Bullet bullets = prefab1.GetComponent<Bullet>();
+                bullets.dir = tankmovement.angles;
+                bullets.type = Weapontype;
+
+                timedelay = 0;
+
+            }
+        }
+        //spawn in scene object
         if (timer > 1)
         {
-            prefab = Instantiate(target, new Vector2(Random.Range(-10 - (15*newRot.x), 10 + (15*newRot.x)), 7), transform.rotation, parent);
+            prefab = Instantiate(target, new Vector2(Random.Range(-10 - (15 * newRot.x), 10 + (15 * newRot.x)), 7), transform.rotation, parent);
             object_list.Add(prefab);
+            timer = 0;
+        }
 
-            for (int i = 0; i < object_list.Count; i += 1)
+        //checks object list
+        for (int i = 0; i < object_list.Count; i += 1)
+        {
+            Scene_Object = object_list[i].GetComponent<SpriteAttack>();
+
+
+            if (tank.bounds.Contains(Scene_Object.transform.position))
             {
-                Scene_Object = object_list[i].GetComponent<SpriteAttack>();
-
-
-                if (tank.bounds.Contains(Scene_Object.transform.position))
-                {
-                    StartCoroutine(hit());
-                    Debug.Log("hit");
-                }
-
-
-                if (Scene_Object.transform.position.y < bottomLeft.y - 5) // destroys the object if it goes off screen
-                {
-                    GameObject current_Object = object_list[i];
-                    object_list.Remove(current_Object);
-                    Destroy(current_Object);
-                }
-                if (Scene_Object.health <= 0)
-                {
-                    if (Scene_Object.type_object == 1)
-                    {
-                        points = Mathf.RoundToInt(Random.Range(10,20));
-                    }
-                    if (Scene_Object.type_object == 2)
-                    {
-                        points = Mathf.RoundToInt(Random.Range(20, 100));
-
-                    }
-                    if (Scene_Object.type_object == 3)
-                    {
-                        points = Mathf.RoundToInt(Random.Range(10, 20));
-
-                    }
-                }
+                StartCoroutine(hit());
             }
 
 
-            timer = 0;
+            if (Scene_Object.transform.position.y < bottomLeft.y - 5) // destroys the object if it goes off screen
+            {
+                GameObject current_Object = object_list[i];
+                object_list.Remove(current_Object);
+                Destroy(current_Object);
+            }
+            if (Scene_Object.health <= 0)
+            {
+                if (Scene_Object.type_object == 1)
+                {
+                    points = Mathf.RoundToInt(Random.Range(10, 20));
+                }
+                if (Scene_Object.type_object == 2)
+                {
+                    points = Mathf.RoundToInt(Random.Range(20, 100));
+
+                }
+                if (Scene_Object.type_object == 3)
+                {
+                    points = Mathf.RoundToInt(Random.Range(10, 20));
+
+                }
+            }
+        }
+
+        //checks bullets
+        for (int i = 0; i < bullet_list.Count; i += 1)
+        {
+
+            bullets = bullet_list[i].GetComponent<Bullet>();
+
+            if (bullets.times > 5)
+            {
+                GameObject current_Object = bullet_list[i];
+                bullet_list.Remove(current_Object);
+                Destroy(current_Object);
+            }
+
         }
         transform.eulerAngles = newRot;
         transform.position = pos;
         //transform.up = dir;
         //control k and then d
+        timedelay += Time.deltaTime;
+        Debug.Log(Weapontype);
     }
 
     //note only put one unity input system in the game else it ignores the others
     public void Move(InputAction.CallbackContext context)
     {
         newRot = context.ReadValue<Vector2>() * Time.deltaTime;
-        
+
 
     }
+
+    float delays = 0;
+    float timedelay = 0;
+    public int Weapontype = 1;
+    bool ButtonPressedDown;
+
     public void OnShoot(InputAction.CallbackContext context)
     {
-        int delays= 0;
-        
 
+        
         if (context.performed == true)
         {
-            tankmovement = tankmovement.GetComponent<TankMovement>();
-
-
-            prefab1 = Instantiate(target1, tankmovement.pos,transform.rotation, parent1);
-            bullet_list.Add(prefab1);
-
-            for (int i = 0; i < bullet_list.Count; i += 1)
-            {
-                if (i == bullet_list.Count)
-                {
-                    bullets = bullet_list[i].GetComponent<Bullet>();
-
-                    bullets.dir = tankmovement.angles;
-                    bullets.type = Weapontype;
-                }
-            }
-
-
+            ButtonPressedDown = true;
+        }
+        if (context.performed == false)
+        {
+            ButtonPressedDown = false;
         }
     }
 
-    int Weapontype = 1;
     public void OnNext(InputAction.CallbackContext context)
     {
         if (context.performed == true)
         {
             Weapontype = 1;
+            if (Weapontype == 1)
+            {
+                Weapontype = 2;
+            }
         }
-        
+        //Debug.Log("1");
+
     }
     public void OnPrevious(InputAction.CallbackContext context)
     {
         if (context.performed == true)
         {
             Weapontype = 2;
+            if (Weapontype == 2)
+            {
+                Weapontype = 1;
+            }
+
         }
 
     }
     IEnumerator hit()
     {
         float t = 0;
-        
+
         while (!tank.bounds.Contains(Scene_Object.transform.position))
         {
             t += Time.deltaTime;
@@ -179,6 +224,8 @@ public class Spawner : MonoBehaviour
                 Scene_Object.health -= 5;
                 Tank_Health -= 1;
                 t = 0;
+                Debug.Log("hit");
+
             }
             yield return null;
         }
