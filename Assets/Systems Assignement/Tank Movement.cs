@@ -5,7 +5,7 @@ using UnityEngine.UIElements;
 public class TankMovement : MonoBehaviour
 {
     float rotation;
-    Vector2 dir;
+    public Vector2 dir;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {

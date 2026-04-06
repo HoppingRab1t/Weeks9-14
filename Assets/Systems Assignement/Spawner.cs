@@ -18,8 +18,7 @@ public class Spawner : MonoBehaviour
     public float Tank_Health;
 
     Vector3 pos;
-    Vector3 newRot;
-    Vector2 dir;
+    public Vector3 newRot;
 
     public List<GameObject> object_list;
 
@@ -42,8 +41,8 @@ public class Spawner : MonoBehaviour
         //position of the thing
         pos.y += -1.4f * Time.deltaTime;
         
-        dir.x += newRot.x;
-        pos.x -= newRot.x;
+        //dir.x += newRot.x * Time.deltaTime;
+        pos.x -= newRot.x ;
 
 
         timer += 1 * Time.deltaTime;
