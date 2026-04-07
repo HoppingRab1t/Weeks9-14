@@ -626,7 +626,6 @@ MonoBehaviour:
   Scene_Object: {fileID: 0}
   bullet_list: []
   bullets: {fileID: 0}
-  tankRotation: {fileID: 522826456}
   Weapontype: 1
 --- !u!114 &631956017
 MonoBehaviour:

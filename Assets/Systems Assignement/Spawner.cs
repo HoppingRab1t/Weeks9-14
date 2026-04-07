@@ -37,7 +37,7 @@ public class Spawner : MonoBehaviour
     public List<GameObject> bullet_list;
     public Bullet bullets;
 
-
+    public Transform tankRotation;
 
 
     float points = 0;
@@ -53,6 +53,7 @@ public class Spawner : MonoBehaviour
     }
 
     // Update is called once per frame
+    int steps;
     void Update()
     {
         //position of the thing
@@ -61,6 +62,7 @@ public class Spawner : MonoBehaviour
         //dir.x += newRot.x * Time.deltaTime;
         pos.x -= newRot.x;
 
+        tankRotation.eulerAngles = new Vector3(0,0, newRot.x * -1000);
 
         timer += 1 * Time.deltaTime;
 
@@ -88,7 +90,19 @@ public class Spawner : MonoBehaviour
                 bullets.dir = tankmovement.angles;
                 bullets.type = Weapontype;
 
+                if (Weapontype == 1)
+                {
+
+                }
+                else if (Weapontype == 2)
+                {
+                    bullets.transform.localScale = new Vector3(3, 3, 3);
+                    Debug.Log(bullets.transform.localScale);
+
+                }
+
                 timedelay = 0;
+
 
             }
         }
@@ -104,7 +118,7 @@ public class Spawner : MonoBehaviour
         for (int i = 0; i < object_list.Count; i += 1)
         {
             Scene_Object = object_list[i].GetComponent<SpriteAttack>();
-
+            SpriteRenderer objectspriterenderer = object_list[i].GetComponent<SpriteRenderer>();
 
             if (tank.bounds.Contains(Scene_Object.transform.position))
             {
@@ -118,22 +132,70 @@ public class Spawner : MonoBehaviour
                 object_list.Remove(current_Object);
                 Destroy(current_Object);
             }
-            if (Scene_Object.health <= 0)
+
+            for (int e = 0; e < bullet_list.Count; e += 1)
             {
-                if (Scene_Object.type_object == 1)
+
+                bullets = bullet_list[e].GetComponent<Bullet>();
+
+                //if (bullets.type == 1)
+                //{
+                //    steps = 35;
+                //}
+                //if (bullets.type == 2)
+                //{
+                //    steps = 15;
+                //}
+
+                //for (int a = 0; a < steps || objectspriterenderer.bounds.Contains(bullets.transform.position); a += 1)
+                //{
+                //    bullets.transform.position += bullets.transform.up * 1 * Time.deltaTime;
+
+                //}
+
+
+                if (objectspriterenderer.bounds.Contains(bullets.transform.position))
                 {
-                    points = Mathf.RoundToInt(Random.Range(10, 20));
-                }
-                if (Scene_Object.type_object == 2)
-                {
-                    points = Mathf.RoundToInt(Random.Range(20, 100));
+                    Debug.Log(Scene_Object.health);
+                    if (bullets.type == 1)
+                    {
+                        Scene_Object.health -= 5;
+                    }
+                    if (bullets.type == 2)
+                    {
+                        Scene_Object.health -= 10;
+                    }
+
+
+                    GameObject current_Object = bullet_list[e];
+                    bullet_list.Remove(current_Object);
+                    Destroy(current_Object);
+
+                    if (Scene_Object.health <= 0)
+                    {
+                        if (Scene_Object.type_object == 1)
+                        {
+                            points = Mathf.RoundToInt(Random.Range(10, 20));
+                        }
+                        if (Scene_Object.type_object == 2)
+                        {
+                            points = Mathf.RoundToInt(Random.Range(20, 100));
+
+                        }
+                        if (Scene_Object.type_object == 3)
+                        {
+                            points = Mathf.RoundToInt(Random.Range(10, 20));
+
+                        }
+                        GameObject current_Objects = object_list[i];
+                        object_list.Remove(current_Objects);
+                        Destroy(current_Objects);
+
+                        Debug.Log(Scene_Object.health);
+                    }
 
                 }
-                if (Scene_Object.type_object == 3)
-                {
-                    points = Mathf.RoundToInt(Random.Range(10, 20));
 
-                }
             }
         }
 
@@ -143,6 +205,9 @@ public class Spawner : MonoBehaviour
 
             bullets = bullet_list[i].GetComponent<Bullet>();
 
+
+
+
             if (bullets.times > 5)
             {
                 GameObject current_Object = bullet_list[i];
@@ -150,13 +215,14 @@ public class Spawner : MonoBehaviour
                 Destroy(current_Object);
             }
 
+
         }
         transform.eulerAngles = newRot;
         transform.position = pos;
         //transform.up = dir;
         //control k and then d
         timedelay += Time.deltaTime;
-        Debug.Log(Weapontype);
+        //Debug.Log(Weapontype);
     }
 
     //note only put one unity input system in the game else it ignores the others
@@ -175,7 +241,7 @@ public class Spawner : MonoBehaviour
     public void OnShoot(InputAction.CallbackContext context)
     {
 
-        
+
         if (context.performed == true)
         {
             ButtonPressedDown = true;
@@ -233,5 +299,21 @@ public class Spawner : MonoBehaviour
     }
 
 
+    //junk
+    public void step(int steps, int where)
+    {
+        for (int e = 0; e < object_list.Count; e += 1)
+        {
+            SpriteRenderer objectspriterenderer = object_list[e].GetComponent<SpriteRenderer>();
+
+
+            bullets.transform.position += transform.up * 1 * Time.deltaTime;
+
+        }
+    }
 
 }
+
+
+
+
