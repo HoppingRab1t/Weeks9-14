@@ -1,6 +1,7 @@
 using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -39,6 +40,11 @@ public class Spawner : MonoBehaviour
 
     public Transform tankRotation;
 
+    public TextMeshProUGUI pointVal;
+    public TextMeshProUGUI tankVal;
+
+    public ParticleSystem particles;
+
 
     float points = 0;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -46,12 +52,13 @@ public class Spawner : MonoBehaviour
 
     void Start()
     {
+        Tank_Health = 100;
         StartCoroutine(spawn());
         StartCoroutine(hit());
         newRot = transform.eulerAngles;
         pos = transform.position;
         bottomLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
-
+        particles.Stop();
     }
 
     // Update is called once per frame
@@ -60,142 +67,157 @@ public class Spawner : MonoBehaviour
     {
         if (Tank_Health <= 0)
         {
+            particles.Play();
             StopCoroutine(spawn());
             StopCoroutine(hit());
+            
+
+            tankVal.text = "Your tank got destroyed!";
+            newRot.x = 0;
+            particles.Play();
+
         }
-        tank.transform.position = new Vector3(0, -3.4f, 0);
-        //position of the thing
-        pos.y += -1.4f * Time.deltaTime;
-
-        //dir.x += newRot.x * Time.deltaTime;
-        pos.x -= newRot.x;
-
-        tankRotation.eulerAngles = new Vector3(0, 0, newRot.x * -1000);
-
-        timer += 1 * Time.deltaTime;
-
-        if (ButtonPressedDown)
+        else
         {
-            if (Weapontype == 1)
+            Debug.Log(Tank_Health);
+            pointVal.text = "Points: " + points;
+            tankVal.text = "Health: " + Tank_Health;
+
+
+            tank.transform.position = new Vector3(0, -3.4f, 0);
+            //position of the thing
+            pos.y += -1.4f * Time.deltaTime;
+
+            //dir.x += newRot.x * Time.deltaTime;
+            pos.x -= newRot.x;
+
+            tankRotation.eulerAngles = new Vector3(0, 0, newRot.x * -1000);
+
+            timer += 1 * Time.deltaTime;
+
+            if (ButtonPressedDown)
             {
-                delays = 0.1f;
-            }
-            else if (Weapontype == 2)
-            {
-                delays = 1;
-
-            }
-
-            if (timedelay > delays)
-            {
-                tankmovement = tankmovement.GetComponent<TankMovement>();
-
-
-                prefab1 = Instantiate(target1, tankmovement.pos, transform.rotation, parent1);
-                bullet_list.Add(prefab1);
-
-                Bullet bullets = prefab1.GetComponent<Bullet>();
-                bullets.dir = tankmovement.angles;
-                bullets.type = Weapontype;
-
                 if (Weapontype == 1)
                 {
-
+                    delays = 0.1f;
                 }
                 else if (Weapontype == 2)
                 {
-                    bullets.transform.localScale = new Vector3(3, 3, 3);
-                    Debug.Log(bullets.transform.localScale);
+                    delays = 1;
 
                 }
 
-                timedelay = 0;
-
-
-            }
-        }
-        //spawn in scene object
-        
-
-        //checks object list
-        for (int i = 0; i < object_list.Count; i += 1)
-        {
-            Scene_Object = object_list[i].GetComponent<SpriteAttack>();
-            SpriteRenderer objectspriterenderer = object_list[i].GetComponent<SpriteRenderer>();
-
-            
-
-
-            if (Scene_Object.transform.position.y < bottomLeft.y - 5) // destroys the object if it goes off screen
-            {
-                GameObject current_Object = object_list[i];
-                object_list.Remove(current_Object);
-                Destroy(current_Object);
-            }
-
-            for (int e = 0; e < bullet_list.Count; e += 1)
-            {
-
-                bullets = bullet_list[e].GetComponent<Bullet>();
-
-                //if (bullets.type == 1)
-                //{
-                //    steps = 35;
-                //}
-                //if (bullets.type == 2)
-                //{
-                //    steps = 15;
-                //}
-
-                //for (int a = 0; a < steps || objectspriterenderer.bounds.Contains(bullets.transform.position); a += 1)
-                //{
-                //    bullets.transform.position += bullets.transform.up * 1 * Time.deltaTime;
-
-                //}
-
-
-                if (objectspriterenderer.bounds.Contains(bullets.transform.position))
+                if (timedelay > delays)
                 {
-                    //Debug.Log(Scene_Object.health);
-                    if (bullets.type == 1)
-                    {
-                        Scene_Object.health -= 5;
-                    }
-                    if (bullets.type == 2)
-                    {
-                        Scene_Object.health -= 40;
-                    }
+                    tankmovement = tankmovement.GetComponent<TankMovement>();
 
 
-                    GameObject current_Object = bullet_list[e];
-                    bullet_list.Remove(current_Object);
+                    prefab1 = Instantiate(target1, tankmovement.pos, transform.rotation, parent1);
+                    bullet_list.Add(prefab1);
+
+                    Bullet bullets = prefab1.GetComponent<Bullet>();
+                    bullets.dir = tankmovement.angles;
+                    bullets.type = Weapontype;
+
+                    if (Weapontype == 1)
+                    {
+
+                    }
+                    else if (Weapontype == 2)
+                    {
+                        bullets.transform.localScale = new Vector3(3, 3, 3);
+                        Debug.Log(bullets.transform.localScale);
+
+                    }
+
+                    timedelay = 0;
+
+
+                }
+            }
+            //spawn in scene object
+
+
+            //checks object list
+            for (int i = 0; i < object_list.Count; i += 1)
+            {
+                Scene_Object = object_list[i].GetComponent<SpriteAttack>();
+                SpriteRenderer objectspriterenderer = object_list[i].GetComponent<SpriteRenderer>();
+
+
+
+
+                if (Scene_Object.transform.position.y < bottomLeft.y - 5) // destroys the object if it goes off screen
+                {
+                    GameObject current_Object = object_list[i];
+                    object_list.Remove(current_Object);
                     Destroy(current_Object);
+                }
 
-                    if (Scene_Object.health <= 0)
+                for (int e = 0; e < bullet_list.Count; e += 1)
+                {
+
+                    bullets = bullet_list[e].GetComponent<Bullet>();
+
+                    //if (bullets.type == 1)
+                    //{
+                    //    steps = 35;
+                    //}
+                    //if (bullets.type == 2)
+                    //{
+                    //    steps = 15;
+                    //}
+
+                    //for (int a = 0; a < steps || objectspriterenderer.bounds.Contains(bullets.transform.position); a += 1)
+                    //{
+                    //    bullets.transform.position += bullets.transform.up * 1 * Time.deltaTime;
+
+                    //}
+
+
+                    if (objectspriterenderer.bounds.Contains(bullets.transform.position))
                     {
-                        if (Scene_Object.type_object == 1)
+                        //Debug.Log(Scene_Object.health);
+                        if (bullets.type == 1)
                         {
-                            points = Mathf.RoundToInt(Random.Range(10, 20));
+                            Scene_Object.health -= 5;
                         }
-                        if (Scene_Object.type_object == 2)
+                        if (bullets.type == 2)
                         {
-                            points = Mathf.RoundToInt(Random.Range(20, 100));
-
+                            Scene_Object.health -= 40;
                         }
-                        if (Scene_Object.type_object == 3)
+
+
+                        GameObject current_Object = bullet_list[e];
+                        bullet_list.Remove(current_Object);
+                        Destroy(current_Object);
+
+                        if (Scene_Object.health <= 0)
                         {
-                            points = Mathf.RoundToInt(Random.Range(10, 20));
+                            if (Scene_Object.type_object == 1)
+                            {
+                                points += (int)Random.Range(100, 200);
+                            }
+                            if (Scene_Object.type_object == 2)
+                            {
+                                points += (int)Random.Range(200, 500);
 
+                            }
+                            if (Scene_Object.type_object >= 3)
+                            {
+                                points += (int)Random.Range(100, 200);
+
+                            }
+                            GameObject current_Objects = object_list[i];
+                            object_list.Remove(current_Objects);
+                            Destroy(current_Objects);
+
+                            Debug.Log(Scene_Object.health);
                         }
-                        GameObject current_Objects = object_list[i];
-                        object_list.Remove(current_Objects);
-                        Destroy(current_Objects);
 
-                        Debug.Log(Scene_Object.health);
                     }
 
                 }
-
             }
         }
 
@@ -294,13 +316,13 @@ public class Spawner : MonoBehaviour
 
                 if (tank.bounds.Contains(Scene_Object.transform.position))
                 {
-                    Scene_Object.health -= 5 * Time.deltaTime;
-                    Tank_Health -= 1 * Time.deltaTime;
+                    Scene_Object.health -= 5 ;
+                    Tank_Health -= 15;
                     int randomNum = Random.Range(-1, 1);
                     tank.transform.position = new Vector3(0 + randomNum, -3.4f + randomNum, 0);
 
                 }
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.1f);
             }
             t += Time.deltaTime;
             yield return null;

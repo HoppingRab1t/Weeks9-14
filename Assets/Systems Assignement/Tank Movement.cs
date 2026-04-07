@@ -6,17 +6,19 @@ using UnityEngine.UIElements;
 
 public class TankMovement : MonoBehaviour
 {
+    public Spawner spawner;
+
     public List<GameObject> bullet_list;
 
     public Vector2 pos;
-   
+
 
     public Vector3 angles;
     public Vector2 dir;
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+
     }
 
     // Update is called once per frame
@@ -25,23 +27,28 @@ public class TankMovement : MonoBehaviour
         //converts the x and y into a direction
         //Debug.Log(dir);
         //Debug.Log(transform.position);
-
-        angles = dir - new Vector2(0,0);
-        transform.up = angles;
-        pos = transform.position;
-        
+        spawner = spawner.GetComponent<Spawner>();
+        if (!(spawner.Tank_Health <= 0))
+        {
+            angles = dir - new Vector2(0, 0);
+            transform.up = angles;
+            pos = transform.position;
         }
+
+
+
+    }
     void change_direciton()
     {
         //Vector2
-        
+
     }
     public void OnLook(InputAction.CallbackContext context)
     {
-          dir = context.ReadValue<Vector2>();
+        dir = context.ReadValue<Vector2>();
     }
 
-    
+
     public void OnPoint(InputAction.CallbackContext context)
     {
         //movement = Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>());

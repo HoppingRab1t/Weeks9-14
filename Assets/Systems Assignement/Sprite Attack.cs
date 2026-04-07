@@ -43,7 +43,7 @@ public class SpriteAttack : MonoBehaviour
             health = (int)Random.Range(10, 15);
 
         }
-        Debug.Log(health);
+        //Debug.Log(health);
 
         float randomValue = Random.Range(0.3f, 0.5f);
 
