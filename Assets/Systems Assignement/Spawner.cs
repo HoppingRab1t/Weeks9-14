@@ -26,7 +26,7 @@ public class Spawner : MonoBehaviour
     public TankMovement tankmovement;
 
     public float timer;
-    public float Tank_Health;
+    public float Tank_Health = 100;
 
     Vector3 pos;
     public Vector3 newRot;
@@ -46,6 +46,8 @@ public class Spawner : MonoBehaviour
 
     void Start()
     {
+        StartCoroutine(spawn());
+        StartCoroutine(hit());
         newRot = transform.eulerAngles;
         pos = transform.position;
         bottomLeft = Camera.main.ScreenToWorldPoint(new Vector2(0, 0));
@@ -56,13 +58,19 @@ public class Spawner : MonoBehaviour
     int steps;
     void Update()
     {
+        if (Tank_Health <= 0)
+        {
+            StopCoroutine(spawn());
+            StopCoroutine(hit());
+        }
+        tank.transform.position = new Vector3(0, -3.4f, 0);
         //position of the thing
         pos.y += -1.4f * Time.deltaTime;
 
         //dir.x += newRot.x * Time.deltaTime;
         pos.x -= newRot.x;
 
-        tankRotation.eulerAngles = new Vector3(0,0, newRot.x * -1000);
+        tankRotation.eulerAngles = new Vector3(0, 0, newRot.x * -1000);
 
         timer += 1 * Time.deltaTime;
 
@@ -107,12 +115,7 @@ public class Spawner : MonoBehaviour
             }
         }
         //spawn in scene object
-        if (timer > 1)
-        {
-            prefab = Instantiate(target, new Vector2(Random.Range(-10 - (15 * newRot.x), 10 + (15 * newRot.x)), 7), transform.rotation, parent);
-            object_list.Add(prefab);
-            timer = 0;
-        }
+        
 
         //checks object list
         for (int i = 0; i < object_list.Count; i += 1)
@@ -120,10 +123,7 @@ public class Spawner : MonoBehaviour
             Scene_Object = object_list[i].GetComponent<SpriteAttack>();
             SpriteRenderer objectspriterenderer = object_list[i].GetComponent<SpriteRenderer>();
 
-            if (tank.bounds.Contains(Scene_Object.transform.position))
-            {
-                StartCoroutine(hit());
-            }
+            
 
 
             if (Scene_Object.transform.position.y < bottomLeft.y - 5) // destroys the object if it goes off screen
@@ -156,14 +156,14 @@ public class Spawner : MonoBehaviour
 
                 if (objectspriterenderer.bounds.Contains(bullets.transform.position))
                 {
-                    Debug.Log(Scene_Object.health);
+                    //Debug.Log(Scene_Object.health);
                     if (bullets.type == 1)
                     {
                         Scene_Object.health -= 5;
                     }
                     if (bullets.type == 2)
                     {
-                        Scene_Object.health -= 10;
+                        Scene_Object.health -= 40;
                     }
 
 
@@ -228,7 +228,7 @@ public class Spawner : MonoBehaviour
     //note only put one unity input system in the game else it ignores the others
     public void Move(InputAction.CallbackContext context)
     {
-        newRot = context.ReadValue<Vector2>() * Time.deltaTime;
+        newRot = context.ReadValue<Vector2>() * 2 * Time.deltaTime;
 
 
     }
@@ -282,20 +282,42 @@ public class Spawner : MonoBehaviour
     {
         float t = 0;
 
-        while (!tank.bounds.Contains(Scene_Object.transform.position))
+
+        while (true)
         {
-            t += Time.deltaTime;
-            if (t > 1)
+
+            for (int i = 0; i < object_list.Count; i += 1)
             {
-                Scene_Object.health -= 5;
-                Tank_Health -= 1;
-                t = 0;
-                Debug.Log("hit");
+                Scene_Object = object_list[i].GetComponent<SpriteAttack>();
 
+                SpriteRenderer objectspriterenderer = object_list[i].GetComponent<SpriteRenderer>();
+
+                if (tank.bounds.Contains(Scene_Object.transform.position))
+                {
+                    Scene_Object.health -= 5 * Time.deltaTime;
+                    Tank_Health -= 1 * Time.deltaTime;
+                    int randomNum = Random.Range(-1, 1);
+                    tank.transform.position = new Vector3(0 + randomNum, -3.4f + randomNum, 0);
+
+                }
+                yield return new WaitForSeconds(0.2f);
             }
+            t += Time.deltaTime;
             yield return null;
-        }
 
+        }
+        yield return null;
+    }
+    IEnumerator spawn()
+    {
+        while (true)
+        {
+            prefab = Instantiate(target, new Vector2(Random.Range(-10 - (15 * newRot.x), 10 + (15 * newRot.x)), 7), transform.rotation, parent);
+            object_list.Add(prefab);
+            yield return new WaitForSeconds(1f);
+
+        }
+        yield return null;
     }
 
 
