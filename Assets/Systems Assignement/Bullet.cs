@@ -22,14 +22,17 @@ public class Bullet : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        //gets all of the different attirbutes and varaibles preset in itself. 
         TrailRenderer trail = GetComponent<TrailRenderer>();
         SpriteRenderer spriteRenderer = GetComponent<SpriteRenderer>();
         Transform transforms = GetComponent<Transform>();
 
+        //sets the angle and move
         angles = dir - new Vector2(0, 0);
         transform.up = angles;
         //Debug.Log(type);
 
+        //depending on the type of bullet it would grab different gradients from a list.
         if (type == 1)
         {
             trail.colorGradient = trailcolor[0];
@@ -48,7 +51,7 @@ public class Bullet : MonoBehaviour
     public float steps;
     void Update()
     {
-        
+        //moves differently depedning on type.
         times += Time.deltaTime;
         if (type == 2)
         {
@@ -59,6 +62,7 @@ public class Bullet : MonoBehaviour
             transform.position += transform.up * 15 * Time.deltaTime;
 
         }
+
         //Debug.Log(transform.localScale);
 
         //if (type == 1)

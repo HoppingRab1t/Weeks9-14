@@ -24,12 +24,14 @@ public class TankMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //converts the x and y into a direction
-        //Debug.Log(dir);
-        //Debug.Log(transform.position);
+        
+        //gets spawner variables
         spawner = spawner.GetComponent<Spawner>();
+
+        //checks if the tank is destoryed or not
         if (!(spawner.Tank_Health <= 0))
         {
+            //sets the rotation oft the turret
             angles = dir - new Vector2(0, 0);
             transform.up = angles;
             pos = transform.position;
@@ -38,21 +40,13 @@ public class TankMovement : MonoBehaviour
 
 
     }
-    void change_direciton()
-    {
-        //Vector2
-
-    }
+    //gets the value of the controller input
     public void OnLook(InputAction.CallbackContext context)
     {
         dir = context.ReadValue<Vector2>();
     }
 
 
-    public void OnPoint(InputAction.CallbackContext context)
-    {
-        //movement = Camera.main.ScreenToWorldPoint(context.ReadValue<Vector2>());
-
-    }
+  
 }
 

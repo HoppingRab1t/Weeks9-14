@@ -9,7 +9,7 @@ public class SpriteAttack : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        type_object = (int)Random.Range(1, 4);
+        type_object = (int)Random.Range(1, 4);//chooses random type
         if (type_object == 3)
         {
             type_object = (int)Random.Range(1, 4); //further lowers the chance of becoming a crate
@@ -19,6 +19,7 @@ public class SpriteAttack : MonoBehaviour
 
             }
         }
+        //sets health value depending on the type
         if (type_object == 1)
         {
             health = (int)Random.Range(20, 35);
@@ -45,6 +46,7 @@ public class SpriteAttack : MonoBehaviour
         }
         //Debug.Log(health);
 
+        //sets a ranodm rotationa and size to give variety.
         float randomValue = Random.Range(0.3f, 0.5f);
 
         transform.eulerAngles = new Vector3(0, 0, Random.Range(0, 360));

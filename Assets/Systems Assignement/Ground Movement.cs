@@ -14,15 +14,18 @@ public class GroundMovement : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //gets the spanwer code (for variables)
         spawner = spawner.GetComponent<Spawner>();
 
+        //checks if the tank has health
         if (!(spawner.Tank_Health <= 0))
         {
-
+            //moves along with the scene
             pos = transform.position;
             pos.x -= spawner.newRot.x;
             pos.y -= 1.4f * Time.deltaTime;
 
+            //resets positon when reaches to a certain point
             if (pos.y <= -16.5)
             {
                 pos.y = 6;
@@ -35,7 +38,7 @@ public class GroundMovement : MonoBehaviour
             {
                 pos.x = 11;
             }
-
+            //changes position
             transform.position = pos;
         }
     }
